@@ -78,7 +78,6 @@ fun TimerApp(mainViewModel: MainViewModel, modifier: Modifier = Modifier) {
     val mins = mainViewModel.minutes.observeAsState()
     val hours = mainViewModel.hours.observeAsState()
     val resumed = mainViewModel.isRunning.observeAsState()
-//    val done = mainViewModel.isFinished.observeAsState()
 
     Surface(color = MaterialTheme.colors.background) {
         val typography = MaterialTheme.typography
