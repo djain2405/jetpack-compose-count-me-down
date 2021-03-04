@@ -29,9 +29,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -39,8 +41,9 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowCircleDown
 import androidx.compose.material.icons.outlined.ArrowCircleUp
+import androidx.compose.material.icons.outlined.NotStarted
+import androidx.compose.material.icons.outlined.PauseCircleOutline
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -75,7 +78,7 @@ fun TimerApp(mainViewModel: MainViewModel, modifier: Modifier = Modifier) {
     val mins = mainViewModel.minutes.observeAsState()
     val hours = mainViewModel.hours.observeAsState()
     val resumed = mainViewModel.isRunning.observeAsState()
-    val done = mainViewModel.isFinished.observeAsState()
+//    val done = mainViewModel.isFinished.observeAsState()
 
     Surface(color = MaterialTheme.colors.background) {
         val typography = MaterialTheme.typography
@@ -162,46 +165,58 @@ fun TimerApp(mainViewModel: MainViewModel, modifier: Modifier = Modifier) {
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                AnimatedVisibility(visible = resumed.value != true) {
-                    Button(
-                        onClick = { mainViewModel.startCountDown() },
-                        enabled = !reachedZeroTime(secs, mins, hours)
-                    ) {
-                        Text(text = "Count Down!")
-                    }
-                }
-            }
-            Spacer(modifier = Modifier.height(32.dp))
-            Row(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .padding(start = 40.dp, end = 40.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                AnimatedVisibility(
-                    visible = resumed.value == true,
+                FloatingActionButton(
+                    onClick = {
+                        if (!(
+                            (secs.value ?: 0) == 0 && (mins.value ?: 0) == 0 && (
+                                hours.value
+                                    ?: 0
+                                ) == 0
+                            )
+                        ) {
+                            if (resumed.value != true) {
+                                mainViewModel.startCountDown()
+                            } else {
+                                mainViewModel.cancelTimer()
+                            }
+                        } else null
+                    },
+                    modifier = modifier
+                        .padding(16.dp)
+                        .height(48.dp)
+                        .widthIn(min = 48.dp),
+                    backgroundColor = MaterialTheme.colors.primary,
+                    contentColor = MaterialTheme.colors.onPrimary
                 ) {
-                    Button(onClick = { mainViewModel.cancelTimer() }) {
-                        Text(text = "Pause")
-                    }
+                    AnimatingFabContent(
+                        icon = {
+                            if (resumed.value != true)
+                                Icon(
+                                    imageVector = Icons.Outlined.NotStarted,
+                                    contentDescription = null
+                                ) else
+                                Icon(
+                                    imageVector = Icons.Outlined.PauseCircleOutline,
+                                    contentDescription = null
+                                )
+                        },
+                        text = {
+                            if (resumed.value != true)
+                                Text(
+                                    text = "Count Down!"
+                                ) else
+                                Text(
+                                    text = "Pause"
+                                )
+                        },
+                        extended = true
+
+                    )
                 }
             }
         }
     }
 }
-
-@Composable
-private fun reachedZeroTime(
-    secs: State<Int?>,
-    mins: State<Int?>,
-    hours: State<Int?>
-) = (
-    (secs.value ?: 0) == 0 && (mins.value ?: 0) == 0 && (
-        hours.value
-            ?: 0
-        ) == 0
-    )
 
 @ExperimentalAnimationApi
 @Composable
