@@ -10,7 +10,7 @@ Count Me Down is an Android Jetpack Compose App for a single screen countdown ti
 
 
 ## :bulb: Motivation and Context
-* Got a lot of help from ![Official Jetpack compose samples on Github](https://github.com/android/compose-samples)
+* Got a lot of help from [Official Jetpack compose samples on Github](https://github.com/android/compose-samples)
 * Had fun trying my hand at compose animations for the first time
 
 
